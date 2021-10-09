@@ -7,6 +7,7 @@ class FileReaderBase:
     ALLOWED_EXTENSIONS = (
         'json',
         'csv',
+        'pickle',
     )
 
     def __init__(self, filename, path=""):
@@ -32,7 +33,7 @@ class FileReaderBase:
         return self.filename
 
     def set_data(self):
-        with open(self.get_filepath()) as file:
+        with open(self.get_filepath(), 'rb') as file:
             if hasattr(self, f'get_{self.filetype}_data'):
                 return getattr(self, f'get_{self.filetype}_data')(file)
             print(f"Konieczna implementacja metody: get_{self.filetype}_data na {self}")
@@ -58,8 +59,9 @@ class JSONReader(FileReaderBase):
 class PICKLEReader(FileReaderBase):
 
     def get_pickle_data(self, file):
-        pass
+        print(pickle.load(file))
 
 
-reader = JSONReader(filename="data.json")
+reader = PICKLEReader(filename="data.pickle")
+
 print(reader.data)
