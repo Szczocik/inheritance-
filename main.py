@@ -1,5 +1,6 @@
 import pathlib
 import json
+import pickle
 
 class FileReaderBase:
 
@@ -46,11 +47,18 @@ class CSVReader(FileReaderBase):
             data.append(line.replace("\n", "").split(","))
         return data
 
+
 class JSONReader(FileReaderBase):
     
     def get_json_data(self, file):
         json_data = json.loads(file.read())
         return [[key, value] for key, value in json_data.items()]
+
+
+class PICKLEReader(FileReaderBase):
+
+    def get_pickle_data(self, file):
+        pass
 
 
 reader = JSONReader(filename="data.json")
