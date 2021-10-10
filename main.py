@@ -66,14 +66,25 @@ reader = PICKLEReader(filename="data2.pickle")
 
 print(reader.data)
 
-# data_file = {}
+# with open('data.pickle','wb') as fout:
+#     pickle.dump([1,2,3],fout)
+
+# read data from a file
+# with open('myfile.pickle') as fin:
+#     print(pickle.load(fin))
+
+
+data_file = {}
 #
 # pickled_data_file = pickle.dumps(data_file)
 # print(pickled_data_file)
-#
-# f = open('data2.pickle', 'rb')
-# data_file = pickle.load(f)
-# f.close()
+
+with open('data.pickle') as data_file:
+    pickle.load(data_file)
+
+# with open('data.pickle', 'wb') as file:
+#     pickle.dump(data_file, file)
+
 # print(data_file)
 #
 # # f = open('data2.pickle', 'wb')
