@@ -65,4 +65,3 @@ class PICKLEReader(FileReaderBase):
 reader = PICKLEReader(filename="data.pickle")
 
 print(reader.data)
-print('sss')

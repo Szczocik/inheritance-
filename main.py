@@ -1,4 +1,3 @@
-import datetime
 import pathlib
 import json
 import pickle
@@ -63,6 +62,23 @@ class PICKLEReader(FileReaderBase):
         print(pickle.load(file))
 
 
-reader = PICKLEReader(filename="data.pickle")
+reader = PICKLEReader(filename="data2.pickle")
 
 print(reader.data)
+
+# data_file = {}
+#
+# pickled_data_file = pickle.dumps(data_file)
+# print(pickled_data_file)
+#
+# f = open('data2.pickle', 'rb')
+# data_file = pickle.load(f)
+# f.close()
+# print(data_file)
+#
+# # f = open('data2.pickle', 'wb')
+# # pickle.dump(data2_file, f)
+# # f.close()
+# # print(data2_file)
+# # data_file = pickle.loads(pickled_data_file)
+# # print(data_file)
