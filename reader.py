@@ -92,3 +92,7 @@ if input_suffix == 'csv':
     reader = CSVReader(filename=input_filename)
 reader.set_data()
 reader.change_data(changes)
+
+if output_suffix == 'csv':
+    writer = CSVWriter()
+    writer.save_data(output_filename, reader.data)
