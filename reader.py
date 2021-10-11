@@ -75,7 +75,8 @@ class JSONReader(FileReaderBase):
 class PICKLEReader(FileReaderBase):
 
     def get_pickle_data(self, file):
-        print(pickle.load(file))
+        pickle_data = pickle.loads(file.read())
+        return [[key, value] for key, value in pickle_data.items()]
 
 
 reader = PICKLEReader(filename="data.pickle")
