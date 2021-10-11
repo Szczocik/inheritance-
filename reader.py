@@ -1,3 +1,4 @@
+import csv
 import pathlib
 import json
 import pickle
@@ -34,7 +35,7 @@ class FileReaderBase:
         return self.filename
 
     def set_data(self):
-        with open(self.get_filepath(), 'rb') as file:
+        with open(self.get_filepath(), 'r') as file:
             if hasattr(self, f'get_{self.filetype}_data'):
                 return getattr(self, f'get_{self.filetype}_data')(file)
             print(f"Konieczna implementacja metody: get_{self.filetype}_data na {self}")
@@ -60,6 +61,7 @@ class CSVReader(FileReaderBase):
 
 
 class CSVWriter:
+
     def save_data(self, output_filename, data):
         with open(output_filename, 'w') as file:
             writer = csv.writer(file)
@@ -71,6 +73,14 @@ class JSONReader(FileReaderBase):
     def get_json_data(self, file):
         json_data = json.loads(file.read())
         return [[key, value] for key, value in json_data.items()]
+
+
+class JSONWriter:
+
+    def save_data(self, output_filename, data):
+        with open(output_filename, 'w') as file:
+            writer = json.dumps(file)
+            writer.dumps(data)
 
 
 class PICKLEReader(FileReaderBase):
@@ -93,6 +103,8 @@ if input_suffix == 'csv':
 reader.set_data()
 reader.change_data(changes)
 
+
 if output_suffix == 'csv':
     writer = CSVWriter()
     writer.save_data(output_filename, reader.data)
+
