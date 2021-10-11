@@ -1,6 +1,8 @@
+import csv
 import pathlib
 import json
 import pickle
+import sys
 
 class FileReaderBase:
 
@@ -33,11 +35,20 @@ class FileReaderBase:
         return self.filename
 
     def set_data(self):
-        with open(self.get_filepath(), 'rb') as file:
+        with open(self.get_filepath(), 'r') as file:
             if hasattr(self, f'get_{self.filetype}_data'):
                 return getattr(self, f'get_{self.filetype}_data')(file)
             print(f"Konieczna implementacja metody: get_{self.filetype}_data na {self}")
             return []
+
+    def change_data(self, changes):
+        for change in changes:
+            splitted_change = change.split(',')
+            y = int(splitted_change[0])
+            x = int(splitted_change[1])
+            value = splitted_change[2]
+            print(self.data)
+            self.data[x][y] = value
 
 
 class CSVReader(FileReaderBase):
@@ -47,6 +58,13 @@ class CSVReader(FileReaderBase):
         for line in file.readlines():
             data.append(line.replace("\n", "").split(","))
         return data
+
+
+class CSVWriter:
+    def save_data(self, output_filename, data):
+        with open(output_filename, 'w') as file:
+            writer = csv.writer(file)
+            writer.writerows(data)
 
 
 class JSONReader(FileReaderBase):
@@ -59,37 +77,30 @@ class JSONReader(FileReaderBase):
 class PICKLEReader(FileReaderBase):
 
     def get_pickle_data(self, file):
-        print(pickle.load(file))
+        pickle_data = pickle.loads(file.read())
+        return [[key, value] for key, value in pickle_data.items()]
 
 
-reader = PICKLEReader(filename="data2.pickle")
+params = sys.argv[1:]
 
-print(reader.data)
+input_filename = params[0]
+output_filename = params[1]
+changes = params[2:]
+input_suffix = pathlib.Path(input_filename).suffix[1:]
+output_suffix = pathlib.Path(output_filename).suffix[1:]
 
-# with open('data.pickle','wb') as fout:
-#     pickle.dump([1,2,3],fout)
+if input_suffix == 'csv':
+    reader = CSVReader(filename=input_filename)
+reader.set_data()
+reader.change_data(changes)
 
-# read data from a file
-# with open('myfile.pickle') as fin:
-#     print(pickle.load(fin))
+if output_suffix == 'csv':
+    writer = CSVWriter()
+    writer.save_data(output_filename, reader.data)
 
 
-data_file = {}
+# reader = JSONReader(filename="data.json")
 #
-# pickled_data_file = pickle.dumps(data_file)
-# print(pickled_data_file)
+# print(reader.data)
 
-with open('data.pickle') as data_file:
-    pickle.load(data_file)
 
-# with open('data.pickle', 'wb') as file:
-#     pickle.dump(data_file, file)
-
-# print(data_file)
-#
-# # f = open('data2.pickle', 'wb')
-# # pickle.dump(data2_file, f)
-# # f.close()
-# # print(data2_file)
-# # data_file = pickle.loads(pickled_data_file)
-# # print(data_file)
