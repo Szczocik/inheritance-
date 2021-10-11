@@ -58,6 +58,13 @@ class CSVReader(FileReaderBase):
         return data
 
 
+class CSVWriter:
+    def save_data(self, output_filename, data):
+        with open(output_filename, 'w') as file:
+            writer = csv.writer(file)
+            writer.writerows(data)
+
+
 class JSONReader(FileReaderBase):
 
     def get_json_data(self, file):
