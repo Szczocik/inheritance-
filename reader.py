@@ -1,6 +1,7 @@
 import pathlib
 import json
 import pickle
+import sys
 
 
 class FileReaderBase:
@@ -79,6 +80,15 @@ class PICKLEReader(FileReaderBase):
         return [[key, value] for key, value in pickle_data.items()]
 
 
-reader = PICKLEReader(filename="data.pickle")
+params = sys.argv[1:]
 
-print(reader.data)
+input_filename = params[0]
+output_filename = params[1]
+changes = params[2:]
+input_suffix = pathlib.Path(input_filename).suffix[1:]
+output_suffix = pathlib.Path(output_filename).suffix[1:]
+
+if input_suffix == 'csv':
+    reader = CSVReader(filename=input_filename)
+reader.set_data()
+reader.change_data(changes)
