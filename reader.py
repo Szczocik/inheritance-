@@ -39,6 +39,15 @@ class FileReaderBase:
             print(f"Konieczna implementacja metody: get_{self.filetype}_data na {self}")
             return []
 
+    def change_data(self, changes):
+        for change in changes:
+            splitted_change = change.split(',')
+            y = int(splitted_change[0])
+            x = int(splitted_change[1])
+            value = splitted_change[2]
+            print(self.data)
+            self.data[x][y] = value
+
 
 class CSVReader(FileReaderBase):
 
