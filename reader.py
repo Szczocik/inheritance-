@@ -67,7 +67,6 @@ class CSVWriter:
             writer = csv.writer(file)
             writer.writerows(data)
 
-
 class JSONReader(FileReaderBase):
 
     def get_json_data(self, file):
@@ -100,8 +99,8 @@ output_suffix = pathlib.Path(output_filename).suffix[1:]
 
 if input_suffix == 'csv':
     reader = CSVReader(filename=input_filename)
-reader.set_data()
-reader.change_data(changes)
+    reader.set_data()
+    reader.change_data(changes)
 
 
 if output_suffix == 'csv':
