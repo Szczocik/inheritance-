@@ -85,13 +85,8 @@ class JSONWriter:
     def save_data(self, output_filename, data):
         with open(output_filename, 'w') as file:
             data_dict = {}
-            print(data_dict)
-
-            print(data)
-
             for element in data:
                 data_dict[element[0]] = element[1]
-
             json.dump(data_dict, file)
 
 
@@ -105,9 +100,11 @@ class PICKLEReader(FileReaderBase):
 class PICKLEWriter:
 
     def save_data(self, output_filename, data):
-        with open(output_filename, 'w') as file:
-            writer = pickle.dumps(file)
-            writer.dumps(data)
+        with open(output_filename, 'wb') as file:
+            data_dict = {}
+            for element in data:
+                data_dict[element[0]] = element[1]
+            pickle.dump(data_dict, file)
 
 
 params = sys.argv[1:]
@@ -118,6 +115,7 @@ changes = params[2:]
 input_suffix = pathlib.Path(input_filename).suffix[1:]
 output_suffix = pathlib.Path(output_filename).suffix[1:]
 
+
 def get_class_reader(ext):
     if ext == 'csv':
         return CSVReader
@@ -125,6 +123,7 @@ def get_class_reader(ext):
         return JSONReader
     elif ext == 'pickle':
         return PICKLEReader
+
 
 def get_class_writer(ext):
     if ext == 'csv':
@@ -134,10 +133,12 @@ def get_class_writer(ext):
     elif ext == 'pickle':
         return PICKLEWriter
 
+
 class_reader = get_class_reader(input_suffix)(filename=input_filename)
 class_reader.set_data()
 class_reader.change_data(changes)
 
 class_writer = get_class_writer(output_suffix)()
 class_writer.save_data(output_filename, class_reader.data)
+
 
