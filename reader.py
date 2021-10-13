@@ -26,7 +26,6 @@ class FileReaderBase:
         return True
 
     def set_filetype(self):
-        # return self.filename.split(".")[-1]
         return pathlib.Path(self.filename).suffix[1:]
 
     def get_filepath(self):
@@ -35,7 +34,7 @@ class FileReaderBase:
         return self.filename
 
     def set_data(self):
-        if self.set_filetype == 'pikle':
+        if pathlib.Path(self.filename).suffix[1:] == 'pickle':
             mode = 'rb'
         else:
             mode = 'r'
@@ -94,6 +93,7 @@ class PICKLEReader(FileReaderBase):
 
     def get_pickle_data(self, file):
         pickle_data = pickle.loads(file.read())
+        print(pickle_data)
         return [[key, value] for key, value in pickle_data.items()]
 
 
@@ -140,5 +140,3 @@ class_reader.change_data(changes)
 
 class_writer = get_class_writer(output_suffix)()
 class_writer.save_data(output_filename, class_reader.data)
-
-
