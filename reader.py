@@ -35,7 +35,12 @@ class FileReaderBase:
         return self.filename
 
     def set_data(self):
-        with open(self.get_filepath(), 'r') as file:
+        if self.set_filetype == 'pikle':
+            mode = 'rb'
+        else:
+            mode = 'r'
+
+        with open(self.get_filepath(), mode) as file:
             if hasattr(self, f'get_{self.filetype}_data'):
                 return getattr(self, f'get_{self.filetype}_data')(file)
             print(f"Konieczna implementacja metody: get_{self.filetype}_data na {self}")
@@ -63,9 +68,10 @@ class CSVReader(FileReaderBase):
 class CSVWriter:
 
     def save_data(self, output_filename, data):
-        with open(output_filename, 'w') as file:
+        with open(output_filename, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(data)
+
 
 class JSONReader(FileReaderBase):
 
@@ -78,8 +84,15 @@ class JSONWriter:
 
     def save_data(self, output_filename, data):
         with open(output_filename, 'w') as file:
-            writer = json.dumps(file)
-            writer.dumps(data)
+            data_dict = {}
+            print(data_dict)
+
+            print(data)
+
+            for element in data:
+                data_dict[element[0]] = element[1]
+
+            json.dump(data_dict, file)
 
 
 class PICKLEReader(FileReaderBase):
@@ -87,6 +100,14 @@ class PICKLEReader(FileReaderBase):
     def get_pickle_data(self, file):
         pickle_data = pickle.loads(file.read())
         return [[key, value] for key, value in pickle_data.items()]
+
+
+class PICKLEWriter:
+
+    def save_data(self, output_filename, data):
+        with open(output_filename, 'w') as file:
+            writer = pickle.dumps(file)
+            writer.dumps(data)
 
 
 params = sys.argv[1:]
@@ -97,13 +118,26 @@ changes = params[2:]
 input_suffix = pathlib.Path(input_filename).suffix[1:]
 output_suffix = pathlib.Path(output_filename).suffix[1:]
 
-if input_suffix == 'csv':
-    reader = CSVReader(filename=input_filename)
-    reader.set_data()
-    reader.change_data(changes)
+def get_class_reader(ext):
+    if ext == 'csv':
+        return CSVReader
+    elif ext == 'json':
+        return JSONReader
+    elif ext == 'pickle':
+        return PICKLEReader
 
+def get_class_writer(ext):
+    if ext == 'csv':
+        return CSVWriter
+    elif ext == 'json':
+        return JSONWriter
+    elif ext == 'pickle':
+        return PICKLEWriter
 
-if output_suffix == 'csv':
-    writer = CSVWriter()
-    writer.save_data(output_filename, reader.data)
+class_reader = get_class_reader(input_suffix)(filename=input_filename)
+class_reader.set_data()
+class_reader.change_data(changes)
+
+class_writer = get_class_writer(output_suffix)()
+class_writer.save_data(output_filename, class_reader.data)
 
